@@ -27,21 +27,6 @@ module.exports.login = (req,res) =>{
         console.log(error)      
     }
 }
-module.exports.createUser=async(req,res)=>{
-    try {
-        await fetch('http://localhost:8081/user',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-            },
-            body:JSON.stringify(req.body)
-        })
-        return res.redirect(req.get('Referrer')||'/')
-    } catch (error) {
-        console.log(error);
-        return res.redirect(req.get('Referrer')||'/')
-    }
-}
 
 module.exports.logout = (req, res) => {
         return res.redirect('/user/login')
