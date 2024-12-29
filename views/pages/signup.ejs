@@ -56,16 +56,15 @@
         <div class="d-flex vh-100 justify-content-center align-items-center">
             <div class="form-container w-50">
                 <h3 class="form-title text-center fs-2">Sign Up</h3>
-                <form method="post">
+                <form method="post" action="">
+                    <div class="mb-3">
+                        <label for="roles" class="form-label fs-5">Roles (comma-separated):</label>
+                        <input type="text" id="roles" name="roles" class="form-control fs-5"  placeholder="Enter your role" required>
+                    </div>
                     <div class="mb-3">
                         <label for="username" class="form-label fs-5">Username</label>
                         <input type="text" class="form-control fs-5" id="username" name="username"
                             placeholder="Enter your username">
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label fs-5">Email address</label>
-                        <input type="email" class="form-control fs-5" id="email" name="email"
-                            placeholder="Enter your email">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label fs-5">Password</label>
@@ -73,8 +72,9 @@
                             placeholder="Enter your password">
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label fs-5">Phone</label>
-                        <input type="text" class="form-control fs-5" id="phone" name="phone" placeholder="Phone">
+                        <label for="email" class="form-label fs-5">Email address</label>
+                        <input type="email" class="form-control fs-5" id="email" name="email"
+                            placeholder="Enter your email">
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary fs-4">Sign Up</button>

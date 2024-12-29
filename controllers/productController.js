@@ -1,69 +1,59 @@
-const categoryModel = require('../models/categorySchema')
-const product = require('../models/productSchema')
+const categoryModel = require('../models/categorySchema');
+const Product = require('../models/productSchema');
 const fs = require('fs')
 
-module.exports = {
-    addProductPage: async (req, res) => {
-        let categorys = await categoryModel.find()
-        return res.render('./pages/add-product',{
-            categorys
-        })
-    },
-    addProduct: async (req, res) => {
-        try {
-            if (req.file) {
-                req.body.image = req.file.path
-            }
-            await product.create(req.body)
-            return res.redirect('./add-product')
-        } catch (error) {
-            console.log(error)
-            return res.redirect('./add-product')
-        }
-    },
-    viewProductPage: async (req, res) => {
-        try {
-            let data = await product.find({}).populate('categoryId')
-            console.log(data);
-            return res.render('./pages/view-product', { data })
-        } catch (error) {
-            console.log(error)
-            return res.render('./pages/view-product')
-        }
-    },
-    editProductPage: async (req, res) => {
-        try {
-            const { id } = req.params
-            const productData =  await product.findById(id)
-            return res.render('./pages/edit-product', { product:productData })
-        } catch (error) {
-            console.log(error)
-        }
-    },
-    editProduct: async (req, res) => {
-        try {
-            if (req.file) {
-                req.body.image = req.file.path
-                fs.unlinkSync(req.body.oldImage)
-            }else{
-                req.body.image = req.body.oldImage;
-            }
-            let productData = await product.findByIdAndUpdate(req.params.id, req.body)            
-            return res.redirect('/product/view-product')
-        }
-        catch (error) {
-            console.log(error)
-            return res.redirect('/product/view-product')
-        }
-    },
-    deleteProduct: async(req,res) => {
-        try {
-            const deleteData = await product.findByIdAndDelete(req.params.id)   
-            fs.unlinkSync(deleteData.image)
-            return res.redirect(req.get('Referrer') || '/')         
-        } catch (error) {
-            console.log(error)
-            return res.redirect(req.get('Referrer') || '/')            
-        }
+module.exports.addProductPage = async (req, res) => {
+    let categorys = await categoryModel.find()
+    return res.render('./pages/add-product', {
+        categorys
+    })
+},
+
+exports.getProduct = async (req, res) => {
+    const products = await Product.find().populate('categoryId');
+    return res.render('./pages/view-product', { products })
+};
+
+module.exports.addProduct = async (req, res) => {
+    if(req.file){
+            req.body.image = req.file.path
     }
-}
+    const newProduct = new Product(req.body);
+    await newProduct.save();
+    return res.redirect(req.get('Referrer') || '/')
+};
+
+module.exports.updateProductPage = async (req, res) => {
+    try {
+        const productData =  await Product.findById(req.params.id)
+        return res.render('./pages/edit-product', { product:productData })
+    } catch (error) {
+        console.log(error)
+    }
+};
+
+// Update product
+module.exports.updateProduct = async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+        return res.status(404).json({ message: 'Product not found.' });
+    }
+    if (req.file) {
+        req.body.image = req.file.path
+        fs.unlinkSync(req.body.oldImage)
+    }else{
+        req.body.image = req.body.oldImage;
+    }
+    let productData = await Product.findByIdAndUpdate(req.params.id, req.body)            
+    return res.redirect('/product/view-product')
+};
+
+// Delete product
+module.exports.deleteProduct = async (req, res) => {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) {
+        return res.status(404).json({ message: 'Product not found.' });
+    }
+    fs.unlinkSync(product.image)
+    return res.redirect(req.get('Referrer') || '/')
+};

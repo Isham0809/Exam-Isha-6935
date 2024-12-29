@@ -3,11 +3,12 @@ const { Router } = require("express")
 const productRouter = require('./productRouter')
 const categoryRouter = require("./categoryRouter")
 const userRouter = require("./userRouter")
+const authenticateToken = require("../middlewares/authenticate")
 
 
 const router = Router()
 
-router.get('/',(req,res)=>{
+router.get('/', authenticateToken, (req, res) => {
     res.render('index')
 })
 router.use('/user', userRouter)
